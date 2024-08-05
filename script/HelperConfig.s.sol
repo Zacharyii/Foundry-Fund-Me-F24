@@ -6,21 +6,24 @@ import {Script} from "forge-std/Script.sol";
 import {MockV3Aggregator} from "../test/mocks/MockV3Aggregator.sol";
 
 contract HelperConfig is Script {
-    NetworkConfig public activeNetworkConfig;
+    NetworkConfig public activeNetworkConfig; // 当前活跃的网络配置
 
-    uint8 public constant DECIMALS = 8;
-    int256 public constant INITIAL_PRICE = 2000e8;
+    uint8 public constant DECIMALS = 8; // 价格预言机的小数位数
+    int256 public constant INITIAL_PRICE = 2000e8; // 初始价格
 
     struct NetworkConfig {
-        address priceFeed;
+        address priceFeed; // 价格预言机地址
     }
 
     constructor() {
         if (block.chainid == 11155111) {
+            // Sepolia 测试网
             activeNetworkConfig = getSepoliaEthConfig();
         } else if (block.chainid == 1) {
+            // 以太坊主网
             activeNetworkConfig = getMainnetEthConfig();
         } else {
+            // 本地开发环境 (Anvil)
             activeNetworkConfig = getOrCreatAnvilEthConfig();
         }
     }
@@ -41,7 +44,7 @@ contract HelperConfig is Script {
 
     function getOrCreatAnvilEthConfig() public returns (NetworkConfig memory) {
         if (activeNetworkConfig.priceFeed != address(0)) {
-            return activeNetworkConfig;
+            return activeNetworkConfig; // 如果已经存在配置，直接返回
         }
 
         vm.startBroadcast();
